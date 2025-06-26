@@ -34,9 +34,10 @@ enum GameStatus {
 
 model User {
     id           String @id @default(cuid())
-    login        String
+    login        String @unique
     email        String
     passwordHash String
+    salt         String
     rating       Int
     games        Game[] @relation("games")
     winningGames Game[]

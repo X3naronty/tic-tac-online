@@ -1,9 +1,19 @@
-import type { ReactNode } from 'react';
+'use client';
 
-interface Props {
+import { Either, rightFrom } from '@/shared/lib/either';
+import { useActionState, type FormHTMLAttributes, type ReactNode } from 'react';
+import type React from 'react';
+
+export function Form({
+    action,
+    children,
+}: {
+    action: (formData: FormData) => void | Promise<void>;
     children: ReactNode;
-}
-
-export function Form({ children }: Props) {
-    return <form className="mx-auto max-w-[400px] space-y-6 p-6">{children}</form>;
+}) {
+    return (
+        <form action={action} className="mx-auto max-w-[400px] space-y-6 p-6">
+            {children}
+        </form>
+    );
 }
