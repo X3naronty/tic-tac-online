@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import 'server-only';
 import { SessionEntity, userToSession } from '../domain';
+import { userRepository } from '../repositories/user';
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -22,7 +23,7 @@ export async function decrypt(session: string | undefined = '') {
         const { payload } = await jwtVerify(session, encodedKey, {
             algorithms: ['HS256'],
         });
-        return rightFrom(payload);
+        return rightFrom(payload as SessionEntity);
     } catch (error) {
         return leftFrom({ message: 'Failed to verify session' });
     }
@@ -77,7 +78,8 @@ export const verifySession = async () => {
     if (session.type === 'left') {
         redirect('/log-in');
     }
-    return { isAuth: true, userId: session.value };
+
+    return { isAuth: true, session: session.value };
 };
 
 export const sessionService = { createSession, deleteSession, verifySession };
