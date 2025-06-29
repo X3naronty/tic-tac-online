@@ -15,6 +15,7 @@ export async function createGame(player: Player) {
         id: '',
         creator: player,
         status: 'idle',
+        field: Array(9).fill(null),
     });
 
     return rightFrom(newGame);

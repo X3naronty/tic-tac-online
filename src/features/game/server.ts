@@ -1,0 +1,1 @@
+export {getGameStream} from './routes/get-game-stream';

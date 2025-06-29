@@ -9,16 +9,13 @@ import prisma from '@/shared/lib/db';
 import type { Game, Prisma, User } from '@prisma/client';
 import { z } from 'zod';
 
-export const gameRepository = {
-    fetchGamesList,
-    createGame
-};
+const fieldSchema = z.array(z.union([z.literal('X'), z.literal('O'), z.null()]));
 
 async function createGame(game: GameIdleEntity): Promise<GameIdleEntity> {
     const newGame = await prisma.game.create({
         data: {
             status: game.status,
-            field: Array(9).fill(null),
+            field: game.field,
             players: {
                 connect: { id: game.creator.id },
             },
@@ -32,7 +29,20 @@ async function createGame(game: GameIdleEntity): Promise<GameIdleEntity> {
     return dbGameToEntity(newGame) as GameIdleEntity;
 }
 
-const fieldSchema = z.array(z.union([z.string(), z.null()]));
+async function fetchGameBy(where?: Prisma.GameWhereInput) {
+    const game = await prisma.game.findFirst({
+        where,
+        include: {
+            winner: true,
+            players: true,
+        },
+    });
+    if (game) {
+        return dbGameToEntity(game);
+    } else {
+        return null;
+    }
+}
 
 async function fetchGamesList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
     const games = await prisma.game.findMany({
@@ -62,6 +72,7 @@ function dbGameToEntity(
                 id: game.id,
                 creator: creator,
                 status: 'idle',
+                field: fieldSchema.parse(game.field),
             } satisfies GameIdleEntity;
         }
         case 'inProgress': {
@@ -94,3 +105,9 @@ function dbGameToEntity(
         }
     }
 }
+
+export const gameRepository = {
+    fetchGamesList,
+    createGame,
+    fetchGameBy,
+};

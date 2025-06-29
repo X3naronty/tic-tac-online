@@ -10,19 +10,22 @@ import { useEventSource } from '@/shared/lib/sse/client';
 import { useGame } from '../model/use-game';
 
 export function Game({ id }: { id: string }) {
-    
-    const game: GameDomain.GameEntity = {
-        id: '1',
-        creator: {
-            id: '1',
-            login: 'user1',
-            rating: 1000,
-        },
-        field: ['X', 'X', 'X', null, null, null, null, null, null],
-        status: 'idle',
-    };
+    const [game, error, isPending] = useGame(id);
+    // const game: GameDomain.GameEntity = {
+    //     id: '1',
+    //     creator: {
+    //         id: '1',
+    //         login: 'user1',
+    //         rating: 1000,
+    //     },
+    //     field: ['X', 'X', 'X', null, null, null, null, null, null],
+    //     status: 'idle',
+    // };
 
-  
+    if (isPending || !game) {
+        return <div>Ops... Something went wrong</div>;
+    }
+
     return (
         <>
             <Card>
