@@ -1,45 +1,30 @@
-'use client';
+import { getCurrentUser } from '@/entities/user/services/get-current-user';
+import { GameClient } from './game-client';
+import { getGameById } from '@/entities/game/server';
+import { startGame } from '@/entities/game/services/start-game';
+import { gameEvents } from '../services/game-events';
 
-import { GameDomain } from '@/entities/game';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
-import { GameStatus } from '../ui/status';
-import { Players } from '../ui/players';
-import { GameField } from '../ui/field';
-import { useEffect, useState } from 'react';
-import { useEventSource } from '@/shared/lib/sse/client';
-import { useGame } from '../model/use-game';
+export async function Game({ id, join }: { id: string; join: boolean }) {
+    const getUserResult = await getCurrentUser();
+    if (getUserResult.type === 'left') {
+        return <div>User does not exist</div>;
+    }
+    let game = await getGameById(id);
 
-export function Game({ id }: { id: string }) {
-    const [game, error, isPending] = useGame(id);
-    // const game: GameDomain.GameEntity = {
-    //     id: '1',
-    //     creator: {
-    //         id: '1',
-    //         login: 'user1',
-    //         rating: 1000,
-    //     },
-    //     field: ['X', 'X', 'X', null, null, null, null, null, null],
-    //     status: 'idle',
-    // };
-
-    if (isPending || !game) {
-        return <div>Ops... Something went wrong</div>;
+    if (!game) {
+        return <div>Game not found</div>;
+    }
+    console.log(getUserResult.value.login);
+    console.log(gameEvents);
+    if (join) {
+        const startGameResult = await startGame(game, getUserResult.value);
+        if (startGameResult.type === 'right') {
+            game = startGameResult.value;
+            gameEvents.emit(startGameResult.value);
+        } else {
+            return <div>{startGameResult.error.message}</div>;
+        }
     }
 
-    return (
-        <>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tic Tac Online</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <CardDescription>
-                        <GameStatus game={game} />
-                        <Players game={game} />
-                        <GameField game={game} />
-                    </CardDescription>
-                </CardContent>
-            </Card>
-        </>
-    );
+    return <GameClient defaultGame={game} />;
 }

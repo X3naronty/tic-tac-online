@@ -6,7 +6,6 @@ export async function createGame(player: Player) {
         players: { some: { id: player.id } },
         status: 'idle',
     });
-    console.log(playerGames);
     if (playerGames.length) {
         return leftFrom({ message: 'Player can create 1 only game' });
     }

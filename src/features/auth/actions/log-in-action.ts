@@ -22,10 +22,8 @@ type FormState = {
 export async function logInAction(state: unknown, formData: FormData): Promise<FormState> {
     const data = Object.fromEntries(formData.entries());
     const result = formDataSchema.safeParse(data);
-    console.log(2);
     if (!result.success) {
         const formattedErrors = result.error.format();
-        console.log(2);
         return {
             formData,
             errors: {

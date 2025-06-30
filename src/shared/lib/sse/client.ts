@@ -12,7 +12,6 @@ export function useEventSource<T>(url: string) {
                 setPending(false);
                 setData(JSON.parse(message.data));
                 setError(null);
-                console.log(1);
             } catch (e) {
                 setError(e);
             }

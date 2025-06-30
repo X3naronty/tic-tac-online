@@ -1,11 +1,14 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/ui/card';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 interface Props {
+    id: string;
     login: string;
     rating: number;
 }
 
-export function GameCard({ login, rating }: Props) {
+export function GameCard({ id, login, rating }: Props) {
     return (
         <Card>
             <CardHeader>
@@ -14,6 +17,11 @@ export function GameCard({ login, rating }: Props) {
             <CardContent>
                 <CardDescription>{rating}</CardDescription>
             </CardContent>
+            <CardFooter>
+                <Link href={`/game/${id}?join=true`}>
+                    Join 
+                </Link>
+            </CardFooter>
         </Card>
     );
 }

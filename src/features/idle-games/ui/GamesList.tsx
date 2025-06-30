@@ -7,7 +7,7 @@ export async function GamesList() {
         <ul className="grid grid-cols-2 gap-4">
             {games.map((game) => (
                 <li key={game.id}>
-                    <GameCard login={game.creator.login} rating={game.creator.rating} />
+                    <GameCard id={game.id} login={game.creator.login} rating={game.creator.rating} />
                 </li>
             ))}
         </ul>

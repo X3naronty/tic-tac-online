@@ -9,7 +9,6 @@ interface Props {
 }
 
 export function CreateGameButton({disabled, onClick}: Props) {
-    console.log('Button is rendering', disabled);
     return (
         <Button disabled={disabled} onClick={onClick}>Create new game</Button>
     );

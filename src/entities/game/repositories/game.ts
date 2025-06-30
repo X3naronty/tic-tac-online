@@ -4,6 +4,7 @@ import type {
     GameInProgressEntity,
     GameOverDrawEntity,
     GameOverEntity,
+    Player,
 } from '@/entities/game/domain';
 import prisma from '@/shared/lib/db';
 import type { Game, Prisma, User } from '@prisma/client';
@@ -42,6 +43,26 @@ async function fetchGameBy(where?: Prisma.GameWhereInput) {
     } else {
         return null;
     }
+}
+
+async function startGame(gameId: string, player: Player) {
+    return dbGameToEntity(
+        await prisma.game.update({
+            where: { id: gameId },
+            data: {
+                players: {
+                    connect: {
+                        id: player.id,
+                    },
+                },
+                status: 'inProgress',
+            },
+            include: {
+                winner: true,
+                players: true,
+            },
+        })
+    );
 }
 
 async function fetchGamesList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
@@ -110,4 +131,5 @@ export const gameRepository = {
     fetchGamesList,
     createGame,
     fetchGameBy,
+    startGame,
 };
