@@ -18,7 +18,7 @@ export function GameCard({ id, login, rating }: Props) {
                 <CardDescription>{rating}</CardDescription>
             </CardContent>
             <CardFooter>
-                <Link href={`/game/${id}?join=true`}>
+                <Link href={`/game/${id}`}>
                     Join 
                 </Link>
             </CardFooter>
