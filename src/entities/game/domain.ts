@@ -32,6 +32,7 @@ export type GameOverDrawEntity = {
 export type Player = {
     id: string;
     login: string;
+    email: string;
     rating: number;
 };
 

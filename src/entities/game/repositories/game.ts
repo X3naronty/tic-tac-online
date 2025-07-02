@@ -7,7 +7,7 @@ import type {
     Player,
 } from '@/entities/game/domain';
 import prisma from '@/shared/lib/db';
-import type { Game, Prisma, User } from '@prisma/client';
+import type { Game, GamePlayer, Prisma, User } from '@prisma/client';
 import { z } from 'zod';
 
 const fieldSchema = z.array(z.union([z.literal('X'), z.literal('O'), z.null()]));
@@ -18,11 +18,18 @@ async function createGame(game: GameIdleEntity): Promise<GameIdleEntity> {
             status: game.status,
             field: game.field,
             players: {
-                connect: { id: game.creator.id },
+                create: {
+                    index: 0,
+                    userId: game.creator.id
+                }
             },
         },
         include: {
-            players: true,
+            players: {
+                include: {
+                    user: true,
+                },
+            },
             winner: true,
         },
     });
@@ -35,7 +42,11 @@ async function fetchGameBy(where?: Prisma.GameWhereInput) {
         where,
         include: {
             winner: true,
-            players: true,
+            players: {
+                include: {
+                    user: true,
+                },
+            },
         },
     });
     if (game) {
@@ -51,15 +62,20 @@ async function startGame(gameId: string, player: Player) {
             where: { id: gameId },
             data: {
                 players: {
-                    connect: {
-                        id: player.id,
-                    },
+                    create: {
+                        userId: player.id,
+                        index: 1,
+                    } 
                 },
                 status: 'inProgress',
             },
             include: {
                 winner: true,
-                players: true,
+                players: {
+                    include: {
+                        user: true,
+                    },
+                },
             },
         })
     );
@@ -70,7 +86,11 @@ async function fetchGamesList(where?: Prisma.GameWhereInput): Promise<GameEntity
         where,
         include: {
             winner: true,
-            players: true,
+            players: {
+                include: {
+                    user: true,
+                },
+            },
         },
     });
 
@@ -79,16 +99,18 @@ async function fetchGamesList(where?: Prisma.GameWhereInput): Promise<GameEntity
 
 function dbGameToEntity(
     game: Game & {
-        players: User[];
+        players: (GamePlayer & { user: User })[];
         winner: User | null;
     }
 ): GameEntity {
+    const players = game.players.sort((a, b) => a.index - b.index).map(dbPlayerToPlayer);
+    
     switch (game.status) {
         case 'idle': {
-            if (!game.players) {
+            if (!players.length) {
                 throw new Error('Game has no players');
             }
-            const creator = game.players[0];
+            const creator = players[0];
             return {
                 id: game.id,
                 creator: creator,
@@ -99,7 +121,7 @@ function dbGameToEntity(
         case 'inProgress': {
             return {
                 id: game.id,
-                players: game.players,
+                players: players,
                 field: fieldSchema.parse(game.field),
                 status: 'inProgress',
             } satisfies GameInProgressEntity;
@@ -110,7 +132,7 @@ function dbGameToEntity(
             }
             return {
                 id: game.id,
-                players: game.players,
+                players: players,
                 field: fieldSchema.parse(game.field),
                 status: 'gameOver',
                 winner: game.winner,
@@ -119,12 +141,21 @@ function dbGameToEntity(
         case 'gameOverDraw': {
             return {
                 id: game.id,
-                players: game.players,
+                players: players,
                 field: fieldSchema.parse(game.field),
                 status: 'gameOverDraw',
             } satisfies GameOverDrawEntity;
         }
     }
+}
+
+function dbPlayerToPlayer(dbPlayer: GamePlayer & { user: User }): Player {
+    return {
+        id: dbPlayer.user.id,
+        login: dbPlayer.user.login,
+        email: dbPlayer.user.email,
+        rating: dbPlayer.user.rating,
+    };
 }
 
 export const gameRepository = {
