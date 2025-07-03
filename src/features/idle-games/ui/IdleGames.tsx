@@ -11,7 +11,7 @@ import { IdleGamesLayout } from './IdleGamesLayout';
 
 export function IdleGames() {
     return (
-        <div className="flex flex-col items-center">
+        <div className="">
             <IdleGamesLayout>
                 <GamesList/>
             </IdleGamesLayout>

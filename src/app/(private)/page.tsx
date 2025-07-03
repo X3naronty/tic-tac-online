@@ -3,9 +3,7 @@ import { IdleGames } from '@/features/idle-games/server';
 export default async function Home() {
     return (
         <main className="">
-            <section className="flex flex-col gap-4 container mx-auto pt-[100px]">
-                <h1 className="text-4xl">Available games</h1>
-
+            <section className="container mx-auto pt-[60px]">
                 <IdleGames />
             </section>
         </main>

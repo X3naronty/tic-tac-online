@@ -12,9 +12,13 @@ interface Props {
 export function IdleGamesLayout({ children }: Props) {
     const [state, onButtonClickAction, isPending] = useActionState(createGameAction, null);
     return (
-        <div>
-            <CreateGameButton disabled={isPending} onClick={() => startTransition(onButtonClickAction)} />
-            {!!(state?.type === 'left') && <CreateGameError error={state.error} />}
+        <div className="flex flex-col items-center gap-8">
+            <h1 className="text-4xl text-center">Available games</h1>
+
+            <div className="flex flex-col items-center gap-2">
+                <CreateGameButton disabled={isPending} onClick={() => startTransition(onButtonClickAction)} />
+                {!!(state?.type === 'left') && <CreateGameError error={state.error} />}
+            </div>
             {children}
         </div>
     );

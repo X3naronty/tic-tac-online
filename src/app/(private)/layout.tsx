@@ -1,5 +1,6 @@
 import { sessionService } from '@/entities/user/server';
 import { Button } from '@/shared/ui/button';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -8,9 +9,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
     return (
         <>
             <header>
-                <div className="">
-                    <div className="">online-tic-tac-toe</div>
-                    <div className="">
+                <div className="flex items-center p-6 justify-between border-b-1 border-b-stone-500">
+                    <Link href="/" className="">TIC TAC TOE</Link>
+                    <div className="flex items-center gap-5">
                         {session.session.login}
                         <form action={
                             async ()  => {

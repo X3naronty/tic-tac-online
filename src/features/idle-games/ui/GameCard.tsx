@@ -11,14 +11,14 @@ interface Props {
 export function GameCard({ id, login, rating }: Props) {
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>{login}</CardTitle>
+            <CardHeader className="mb-2">
+                <CardTitle>Player: {login}</CardTitle>
             </CardHeader>
-            <CardContent>
-                <CardDescription>{rating}</CardDescription>
+            <CardContent className="mb-4">
+                <CardDescription>Current rating: {rating}</CardDescription>
             </CardContent>
-            <CardFooter>
-                <Link href={`/game/${id}`}>
+            <CardFooter className="">
+                <Link href={`/game/${id}`} className="">
                     Join 
                 </Link>
             </CardFooter>
