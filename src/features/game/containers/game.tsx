@@ -16,7 +16,7 @@ export async function Game({ id }: { id: string }) {
     if (!game) {
         return <div>Game not found</div>;
     }
-    console.log(getUserResult.value.login);
+
     console.log(gameEvents);
 
     if (game.status == 'idle' && game.creator.login !== user.login) {

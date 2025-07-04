@@ -11,11 +11,11 @@ export function GameStatus({ game }: { game: GameDomain.GameEntity }) {
                         return <>Waiting for second player</>;
                     }
                     case 'inProgress': {
-                        const currentSymbol = GameDomain.getCurrentSymbol(game);
+                        const currentSymbol = GameDomain.getNextSymbol(game);
                         return <>Turn: {currentSymbol}</>;
                     }
                     case 'gameOver': {
-                        const currentSymbol = GameDomain.getCurrentSymbol(game);
+                        const currentSymbol = GameDomain.getNextSymbol(game);
                         return (
                             <>
                                 Winner: {game.winner.login} - {currentSymbol}

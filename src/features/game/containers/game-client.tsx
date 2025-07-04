@@ -10,7 +10,7 @@ import { useEventSource } from '@/shared/lib/sse/client';
 import { useGame } from '../model/use-game';
 
 export function GameClient({ defaultGame }: { defaultGame: GameDomain.GameEntity }) {
-    const [game = defaultGame, error, isPending] = useGame(defaultGame.id);
+    const [game = defaultGame, error, isPending, makeMove] = useGame(defaultGame.id);
     // const game: GameDomain.GameEntity = {
     //     id: '1',
     //     creator: {
@@ -36,7 +36,7 @@ export function GameClient({ defaultGame }: { defaultGame: GameDomain.GameEntity
                     <CardDescription>
                         <GameStatus game={game} />
                         <Players game={game} />
-                        <GameField game={game} />
+                        <GameField game={game} onCellClick={makeMove} />
                     </CardDescription>
                 </CardContent>
             </Card>

@@ -5,8 +5,8 @@ export function ErrorMessage({ errors }: { errors?: string[] }) {
         return (
             <Alert variant="destructive">
                 <AlertDescription>
-                    {errors.map((error) => (
-                        <p>{error}</p>
+                    {errors.map((error, idx) => (
+                        <p key={idx}>{error}</p>
                     ))}
                 </AlertDescription>
             </Alert>

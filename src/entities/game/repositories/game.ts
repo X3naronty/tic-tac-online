@@ -9,6 +9,7 @@ import type {
 import prisma from '@/shared/lib/db';
 import type { Game, GamePlayer, Prisma, User } from '@prisma/client';
 import { z } from 'zod';
+import { GameDomain } from '..';
 
 const fieldSchema = z.array(z.union([z.literal('X'), z.literal('O'), z.null()]));
 
@@ -20,8 +21,8 @@ async function createGame(game: GameIdleEntity): Promise<GameIdleEntity> {
             players: {
                 create: {
                     index: 0,
-                    userId: game.creator.id
-                }
+                    userId: game.creator.id,
+                },
             },
         },
         include: {
@@ -65,7 +66,7 @@ async function startGame(gameId: string, player: Player) {
                     create: {
                         userId: player.id,
                         index: 1,
-                    } 
+                    },
                 },
                 status: 'inProgress',
             },
@@ -77,6 +78,27 @@ async function startGame(gameId: string, player: Player) {
                     },
                 },
             },
+        })
+    );
+}
+
+async function saveGame(game: GameInProgressEntity | GameOverDrawEntity | GameOverEntity) {
+    return dbGameToEntity(
+        await prisma.game.update({
+            where: { id: game.id },
+            data: {
+                status: game.status,
+                winnerId: 'winner' in game ? game.winner.id : null,
+                field: game.field,
+            },
+            include: {
+                winner: true,
+                players: {
+                    include: {
+                        user: true,
+                    }
+                }
+            }
         })
     );
 }
@@ -104,7 +126,7 @@ function dbGameToEntity(
     }
 ): GameEntity {
     const players = game.players.sort((a, b) => a.index - b.index).map(dbPlayerToPlayer);
-    
+
     switch (game.status) {
         case 'idle': {
             if (!players.length) {
@@ -163,4 +185,6 @@ export const gameRepository = {
     createGame,
     fetchGameBy,
     startGame,
+    saveGame,
+    
 };

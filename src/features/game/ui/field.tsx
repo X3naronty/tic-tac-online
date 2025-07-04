@@ -12,7 +12,7 @@ export function GameField({
     return (
         <div>
             {field.map((cell, index) => (
-                <Button key={index}>{cell ?? ''}</Button>
+                <Button onClick={(e) => onCellClick?.(index)} key={index}>{cell ?? ''}</Button>
             ))}
         </div>
     ); 
