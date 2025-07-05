@@ -3,11 +3,12 @@ import { Player } from '../domain';
 import { gameRepository } from '../repositories/game';
 export async function createGame(player: Player) {
     const playerGames = await gameRepository.fetchGamesList({
-        players: { some: { id: player.id } },
+        players: { some: { user: { id: player.id } } },
         status: 'idle',
     });
+
     if (playerGames.length) {
-        return leftFrom({ message: 'Player can create 1 only game' });
+        return leftFrom({ message: 'Player can create only 1 game' });
     }
 
     const newGame = await gameRepository.createGame({

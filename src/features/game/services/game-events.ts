@@ -14,7 +14,7 @@ class GameEventsService {
     eventBroker = new EventBrokerInstance('game');
 
     async addListener(gameId: GameId, listener: Listener) {
-        let removeListener = await this.eventBroker.listen(gameId, (data) => {
+        const removeListener = await this.eventBroker.listen(gameId, (data) => {
             listener(data as GameEvent);
         });
 

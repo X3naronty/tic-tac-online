@@ -7,7 +7,7 @@ export default async function Page({
 }) {
     const { id } = await params;
     return (
-        <section>
+        <section className="py-25">
             <Game id={id} />
         </section>
     );

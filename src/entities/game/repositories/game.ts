@@ -7,7 +7,7 @@ import type {
     Player,
 } from '@/entities/game/domain';
 import prisma from '@/shared/lib/db';
-import type { Game, GamePlayer, Prisma, User } from '@prisma/client';
+import { Game, GamePlayer, Prisma, User } from '@prisma/client';
 import { z } from 'zod';
 import { GameDomain } from '..';
 
@@ -102,7 +102,7 @@ async function saveGame(game: GameInProgressEntity | GameOverDrawEntity | GameOv
         })
     );
 }
-
+let a:Prisma.GameWhereInput;
 async function fetchGamesList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
     const games = await prisma.game.findMany({
         where,

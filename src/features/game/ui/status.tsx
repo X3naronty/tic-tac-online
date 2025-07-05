@@ -15,10 +15,10 @@ export function GameStatus({ game }: { game: GameDomain.GameEntity }) {
                         return <>Turn: {currentSymbol}</>;
                     }
                     case 'gameOver': {
-                        const currentSymbol = GameDomain.getNextSymbol(game);
+                        const winnerSymbol = GameDomain.getPlayerSymbol(game, game.winner);
                         return (
                             <>
-                                Winner: {game.winner.login} - {currentSymbol}
+                                Winner: {game.winner.login} - {winnerSymbol}
                             </>
                         );
                     }
