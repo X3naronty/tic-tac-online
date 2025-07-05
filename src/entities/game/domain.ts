@@ -51,7 +51,7 @@ export function getNextSymbol(game: GameInProgressEntity | GameOverEntity | Game
     return (cellsLeft % 2 ? GameSymbol.X : GameSymbol.O) as Cell;
 }
 
-export function getPlayerSymbol(game: GameInProgressEntity, player: Player) {
+export function getPlayerSymbol(game: GameInProgressEntity | GameOverEntity, player: Player) {
     const index = game.players.findIndex((p) => p.id === player.id);
     return { 0: GameSymbol.X, 1: GameSymbol.O }[index];
 }

@@ -27,19 +27,19 @@ export function GameClient({ defaultGame }: { defaultGame: GameDomain.GameEntity
     }
 
     return (
-        <>
-            <Card>
+        <div className="container mx-auto bg-transparent flex justify-center">
+            <Card className="inline-flex bg-transparent gap-5 p-16">
                 <CardHeader>
-                    <CardTitle>Tic Tac Online</CardTitle>
+                    <CardTitle className="text-center text-3xl">Tic Tac Toe</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <CardDescription>
+                <CardContent className="flex flex-col gap-10">
+                    <CardDescription className="text-2xl flex flex-col gap-3 items-center">
                         <GameStatus game={game} />
-                        <Players game={game} />
-                        <GameField game={game} onCellClick={makeMove} />
+                        <Players game={game}/>
                     </CardDescription>
+                    <GameField game={game} onCellClick={makeMove} className="self-center" />
                 </CardContent>
             </Card>
-        </>
+        </div>
     );
 }
