@@ -3,6 +3,7 @@ import { Player } from '../domain';
 import { getGameById } from './get-game-by-id';
 import { gameRepository } from '../repositories/game';
 import { GameDomain } from '..';
+import { idleGamesEvents } from '@/features/idle-games/services/idle-games-events';
 
 export async function startGame(game: GameDomain.GameEntity, newPlayer: Player) {
 
@@ -14,5 +15,10 @@ export async function startGame(game: GameDomain.GameEntity, newPlayer: Player) 
         return leftFrom({message: 'Creator can not join the game'});
     }
     
+    idleGamesEvents.emit({
+        type: 'removeIdleGame',
+        value: game
+    });
+
     return rightFrom(await gameRepository.startGame(game.id, newPlayer));
 }
