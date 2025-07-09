@@ -1,7 +1,6 @@
 import { getGameById, getIdleGames } from '@/entities/game/server';
 import { sseStream } from '@/shared/lib/sse/server';
 import { NextRequest } from 'next/server';
-import { surrenderGame } from '@/entities/user/server';
 import { getCurrentUser } from '@/entities/user/services/get-current-user';
 import { idleGamesEvents } from '../services/idle-games-events';
 import { GameDomain } from '@/entities/game';

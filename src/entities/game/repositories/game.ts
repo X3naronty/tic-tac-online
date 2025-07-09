@@ -7,7 +7,7 @@ import type {
     Player,
 } from '@/entities/game/domain';
 import prisma from '@/shared/lib/db';
-import { Game, GamePlayer, Prisma, User } from '@prisma/client';
+import { $Enums, Game, GamePlayer, Prisma, User } from '@prisma/client';
 import { z } from 'zod';
 import { GameDomain } from '..';
 
@@ -82,6 +82,23 @@ async function startGame(gameId: string, player: Player) {
     );
 }
 
+async function deleteGame(game: GameEntity) {
+     const deleteGamePlayer = prisma.gamePlayer.deleteMany({
+        where: {
+            gameId: game.id,
+        },
+    });
+
+    const deleteGame = prisma.game.delete({
+        where: {
+            id: game.id,
+        },
+    });
+   
+    const transaction = await prisma.$transaction([deleteGamePlayer, deleteGame]);
+    return null;
+}
+
 async function saveGame(game: GameInProgressEntity | GameOverDrawEntity | GameOverEntity) {
     return dbGameToEntity(
         await prisma.game.update({
@@ -96,13 +113,13 @@ async function saveGame(game: GameInProgressEntity | GameOverDrawEntity | GameOv
                 players: {
                     include: {
                         user: true,
-                    }
-                }
-            }
+                    },
+                },
+            },
         })
     );
 }
-let a:Prisma.GameWhereInput;
+let a: Prisma.GameWhereInput;
 async function fetchGamesList(where?: Prisma.GameWhereInput): Promise<GameEntity[]> {
     const games = await prisma.game.findMany({
         where,
@@ -186,5 +203,5 @@ export const gameRepository = {
     fetchGameBy,
     startGame,
     saveGame,
-    
+    deleteGame,
 };

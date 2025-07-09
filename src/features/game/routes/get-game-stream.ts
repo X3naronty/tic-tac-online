@@ -1,9 +1,9 @@
 import { getGameById } from '@/entities/game/server';
+import { surrenderGame } from '@/entities/user/server';
+import { getCurrentUser } from '@/entities/user/services/get-current-user';
 import { sseStream } from '@/shared/lib/sse/server';
 import { NextRequest } from 'next/server';
 import { gameEvents } from '../services/game-events';
-import { surrenderGame } from '@/entities/user/server';
-import { getCurrentUser } from '@/entities/user/services/get-current-user';
 
 export async function getGameStream(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -16,19 +16,18 @@ export async function getGameStream(req: NextRequest, { params }: { params: Prom
     }
     console.log(gameEvents);
     const { response, write, close, setDisconnectHandler } = sseStream(req);
-   
+
     write(game);
     const removeListeners = await gameEvents.addListener(id, (event) => {
         write(event.value);
     });
 
-    setDisconnectHandler( async () => {
+    setDisconnectHandler(async () => {
         const result = await surrenderGame(game, user.value);
-        if(result.type === 'right') {
+        if (result.type === 'right' && result.value) {
             gameEvents.emit(result.value);
         }
         removeListeners();
-        close();
     });
 
     return response;
